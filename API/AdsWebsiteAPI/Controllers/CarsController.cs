@@ -5,6 +5,7 @@ using AdsWebsiteAPI.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using AdsWebsiteAPI.Auth;
+using FluentValidation;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -16,13 +17,17 @@ namespace AdsWebsiteAPI.Controllers
         private readonly IShopRepository shopRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
+        private readonly IValidator<CreateCarDto> createCarDtoValidator;
+        private readonly IValidator<UpdateCarDto> updateCarDtoValidator;
 
-        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
+        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper, IValidator<CreateCarDto> createCarDtoValidator, IValidator<UpdateCarDto> updateCarDtoValidator)
         {
             this.carRepository = carRepository;
             this.shopRepository = shopRepository;
             this.authorizationService = authorizationService;
             this.mapper = mapper;
+            this.createCarDtoValidator = createCarDtoValidator;
+            this.updateCarDtoValidator = updateCarDtoValidator;
         }
 
         // GET: api/shops/{shopId}/Cars
@@ -51,7 +56,7 @@ namespace AdsWebsiteAPI.Controllers
             {
                 return NotFound();
             }
-
+            
             return Ok(mapper.Map<CarDto>(car));
         }
 
@@ -60,6 +65,13 @@ namespace AdsWebsiteAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<CarDto>> PostCar(CreateCarDto createCarDto)
         {
+            var validationResults = await createCarDtoValidator.ValidateAsync(createCarDto);
+
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var bodyType = await carRepository.GetBodyAsync(createCarDto.BodyTypeId);
             var fuelType = await carRepository.GetFuelAsync(createCarDto.FuelTypeId);
             var gearboxType = await carRepository.GetGearboxAsync(createCarDto.GearboxTypeId);
@@ -106,11 +118,18 @@ namespace AdsWebsiteAPI.Controllers
                 return BadRequest();
             }
 
+            var validationResults = await updateCarDtoValidator.ValidateAsync(updateCarDto);
+
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var car = await carRepository.GetAsync(shopId, carId);
 
             if (car == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var bodyType = await carRepository.GetBodyAsync(updateCarDto.BodyTypeId);
@@ -118,8 +137,6 @@ namespace AdsWebsiteAPI.Controllers
             var gearboxType = await carRepository.GetGearboxAsync(updateCarDto.GearboxTypeId);
             var model = await carRepository.GetModelAsync(updateCarDto.ModelId);
             var shop = await shopRepository.GetAsync(updateCarDto.ShopId);
-
-            // Gali priskirti ne savo parduotuvei?
 
             if (bodyType == null || fuelType == null || gearboxType == null || model == null || shop == null)
             {
@@ -156,7 +173,7 @@ namespace AdsWebsiteAPI.Controllers
 
             if (car == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var authorizationResult = await authorizationService.AuthorizeAsync(User, car.Shop, PolicyNames.ResourceOwner);
@@ -168,7 +185,7 @@ namespace AdsWebsiteAPI.Controllers
 
             await carRepository.DeleteAsync(car);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

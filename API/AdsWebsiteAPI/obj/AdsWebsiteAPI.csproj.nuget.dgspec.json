@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj": {}
+    "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj": {
+    "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
+        "projectUniqueName": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
         "projectName": "AdsWebsiteAPI",
-        "projectPath": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
+        "projectPath": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
         "packagesPath": "C:\\Users\\mrk3r\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\obj\\",
+        "outputPath": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mrk3r\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -47,6 +47,10 @@
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
               "version": "[12.0.1, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.7.1, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",

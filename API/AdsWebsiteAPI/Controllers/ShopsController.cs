@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using AdsWebsiteAPI.Auth;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using FluentValidation;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -17,12 +18,16 @@ namespace AdsWebsiteAPI.Controllers
         private readonly IShopRepository shopRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
+        private readonly IValidator<CreateShopRequestDto> createShopRequestValidator;
+        private readonly IValidator<UpdateShopRequestDto> updateShopRequestValidator;
 
-        public ShopsController(IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
+        public ShopsController(IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper, IValidator<CreateShopRequestDto> createShopRequestValidator, IValidator<UpdateShopRequestDto> updateShopRequestValidator)
         {
             this.shopRepository = shopRepository;
             this.authorizationService = authorizationService;
             this.mapper = mapper;
+            this.createShopRequestValidator = createShopRequestValidator;
+            this.updateShopRequestValidator = updateShopRequestValidator;
         }
 
         // GET: api/Shops
@@ -53,11 +58,18 @@ namespace AdsWebsiteAPI.Controllers
         [Authorize(Roles = AdsWebsiteRoles.AdsWebsiteUser)]
         public async Task<ActionResult<CreateShopResponseDto>> PostShop(CreateShopRequestDto createShopDto)
         {
+            var validationResults = await createShopRequestValidator.ValidateAsync(createShopDto);
+
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var existingShop = await shopRepository.GetAsync(createShopDto.Name);
 
             if (existingShop != null)
             {
-                return BadRequest();
+                return Conflict();
             }
 
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
@@ -84,18 +96,25 @@ namespace AdsWebsiteAPI.Controllers
                 return BadRequest();
             }
 
+            var validationResults = await updateShopRequestValidator.ValidateAsync(updateShopDto);
+
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var existingShop = shopRepository.GetAsync(updateShopDto.Name);
 
             if (existingShop != null)
             {
-                return BadRequest();
+                return Conflict();
             }
 
             var shop = await shopRepository.GetAsync(id);
 
             if (shop == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var authorizationResult = await authorizationService.AuthorizeAsync(User, shop, PolicyNames.ResourceOwner);
@@ -117,13 +136,13 @@ namespace AdsWebsiteAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShop(int id)
         {
-            // Delete everything associated with that shop (cars, parts, etc...)
+            // Delete everything associated with that shop (cars, parts, etc...) Cascade
 
             var shop = await shopRepository.GetAsync(id);
 
             if (shop == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var authorizationResult = await authorizationService.AuthorizeAsync(User, shop, PolicyNames.ResourceOwner);
@@ -135,7 +154,7 @@ namespace AdsWebsiteAPI.Controllers
 
             await shopRepository.DeleteAsync(shop);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

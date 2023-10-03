@@ -3,14 +3,15 @@ using AdsWebsiteAPI.Auth.Entities;
 using AdsWebsiteAPI.Auth.Interfaces;
 using AdsWebsiteAPI.Auth.Services;
 using AdsWebsiteAPI.Data;
+using AdsWebsiteAPI.Data.Dtos;
+using AdsWebsiteAPI.Data.Validation;
 using AdsWebsiteAPI.Data.Repositories;
 using AdsWebsiteAPI.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -60,9 +61,15 @@ public class Program
 
         builder.Services.AddTransient<IShopRepository, ShopRepository>();
         builder.Services.AddTransient<ICarRepository, CarRepository>();
-        //builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IPartRepository, PartRepository>();
         builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
+
+        builder.Services.AddTransient<IValidator<CreateCarDto>, CreateCarDtoValidator>();
+        builder.Services.AddTransient<IValidator<UpdateCarDto>, UpdateCarDtoValidator>();
+        builder.Services.AddTransient<IValidator<CreatePartDto>, CreatePartDtoValidator>();
+        builder.Services.AddTransient<IValidator<UpdatePartDto>, UpdatePartDtoValidator>();
+        builder.Services.AddTransient<IValidator<CreateShopRequestDto>, CreateShopRequestDtoValidator>();
+        builder.Services.AddTransient<IValidator<UpdateShopRequestDto>, UpdateShopRequestDtoValidator>();
 
         var app = builder.Build();
 

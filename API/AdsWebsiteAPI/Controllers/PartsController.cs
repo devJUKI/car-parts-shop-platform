@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using AdsWebsiteAPI.Auth;
+using FluentValidation;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -16,21 +17,33 @@ namespace AdsWebsiteAPI.Controllers
         private readonly ICarRepository carRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
+        private readonly IValidator<CreatePartDto> createPartValidator;
+        private readonly IValidator<UpdatePartDto> updatePartValidator;
 
         public PartsController(IPartRepository partRepository, ICarRepository carRepository, IAuthorizationService authorizationService,
-            IMapper mapper)
+            IMapper mapper, IValidator<CreatePartDto> createPartValidator, IValidator<UpdatePartDto> updatePartValidator)
         {
             this.partRepository = partRepository;
             this.carRepository = carRepository;
             this.mapper = mapper;
             this.authorizationService = authorizationService;
+            this.createPartValidator = createPartValidator;
+            this.updatePartValidator = updatePartValidator;
         }
 
         // GET: api/Parts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PartDto>>> GetParts(int shopId, int carId)
         {
+            var car = await carRepository.GetAsync(shopId, carId);
+
+            if (car == null)
+            {
+                return NotFound();
+            }
+
             var parts = await partRepository.GetAllAsync(shopId, carId);
+
             return Ok(parts.Select(p => mapper.Map<PartDto>(p)));
         }
 
@@ -51,13 +64,25 @@ namespace AdsWebsiteAPI.Controllers
         // POST: api/Parts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PartDto>> PostPart(CreatePartDto createPartDto)
+        public async Task<ActionResult<PartDto>> PostPart(int shopId, int carId, CreatePartDto createPartDto)
         {
+            if (shopId != createPartDto.ShopId || carId != createPartDto.CarId)
+            {
+                return BadRequest();
+            }
+
+            var validationResults = await createPartValidator.ValidateAsync(createPartDto);
+            
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var car = await carRepository.GetAsync(createPartDto.ShopId, createPartDto.CarId);
 
             if (car == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var authorizationResult = await authorizationService.AuthorizeAsync(User, car.Shop, PolicyNames.ResourceOwner);
@@ -74,7 +99,11 @@ namespace AdsWebsiteAPI.Controllers
                 Car = car
             };
 
-            return CreatedAtAction("GetPart", new { shopId = createPartDto.ShopId, carId = createPartDto.CarId, partId = part.Id }, mapper.Map<PartDto>(part));
+            await partRepository.CreateAsync(part);
+
+            var returnPart = await partRepository.GetAsync(shopId, carId, part.Id);
+
+            return CreatedAtAction("GetPart", new { shopId = createPartDto.ShopId, carId = createPartDto.CarId, partId = part.Id }, mapper.Map<PartDto>(returnPart));
         }
 
         // PUT: api/Parts/5
@@ -87,11 +116,18 @@ namespace AdsWebsiteAPI.Controllers
                 return BadRequest();
             }
 
+            var validationResults = await updatePartValidator.ValidateAsync(updatePartDto);
+
+            if (validationResults.IsValid == false)
+            {
+                return BadRequest(validationResults.ToDictionary());
+            }
+
             var part = await partRepository.GetAsync(shopId, carId, partId);
 
             if (part == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var car = await carRepository.GetAsync(shopId, carId);
@@ -120,7 +156,7 @@ namespace AdsWebsiteAPI.Controllers
 
             if (part == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             var authorizationResult = await authorizationService.AuthorizeAsync(User, part.Car!.Shop, PolicyNames.ResourceOwner);
@@ -132,7 +168,7 @@ namespace AdsWebsiteAPI.Controllers
 
             await partRepository.DeleteAsync(part);
 
-            return Ok();
+            return NoContent();
         }
     }
 }

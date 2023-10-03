@@ -1,13 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "UKWHlI+LSMjUZ0n9wo9ND2qZ6xpOThN1GgWuBk3/EhbeIdPRsDinuNXzT3DQ2gkCIxsa7iT9eOzQw9H9xJYFRw==",
+  "dgSpecHash": "6Kq8is/zrKfZAJQS3EpQR0wvB/TBXEiVipI5slVec8B9HT4iM4qHn9yxxK/OnfwBtDuRQsDda0agrUSQGoLHtg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
+  "projectFilePath": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mrk3r\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",
+    "C:\\Users\\mrk3r\\.nuget\\packages\\fluentvalidation\\11.7.1\\fluentvalidation.11.7.1.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\mrk3r\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

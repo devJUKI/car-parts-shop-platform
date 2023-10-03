@@ -75,6 +75,19 @@
           }
         }
       },
+      "FluentValidation/11.7.1": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/FluentValidation.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Google.Protobuf/3.21.9": {
         "type": "package",
         "compile": {
@@ -4893,6 +4906,29 @@
         "azureicon.png",
         "lib/netstandard2.0/Azure.Identity.dll",
         "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "FluentValidation/11.7.1": {
+      "sha512": "w9Al4gls6iVGFbTd/NPOPlwzqDTghH+ntL4c4FYUatc+LeybpIwhYArLykZJP/VjF2n3ihj3ws+1yd7KR5lQlg==",
+      "type": "package",
+      "path": "fluentvalidation/11.7.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "fluent-validation-icon.png",
+        "fluentvalidation.11.7.1.nupkg.sha512",
+        "fluentvalidation.nuspec",
+        "lib/net5.0/FluentValidation.dll",
+        "lib/net5.0/FluentValidation.xml",
+        "lib/net6.0/FluentValidation.dll",
+        "lib/net6.0/FluentValidation.xml",
+        "lib/net7.0/FluentValidation.dll",
+        "lib/net7.0/FluentValidation.xml",
+        "lib/netstandard2.0/FluentValidation.dll",
+        "lib/netstandard2.0/FluentValidation.xml",
+        "lib/netstandard2.1/FluentValidation.dll",
+        "lib/netstandard2.1/FluentValidation.xml"
       ]
     },
     "Google.Protobuf/3.21.9": {
@@ -13171,6 +13207,7 @@
     "net6.0": [
       "AutoMapper >= 12.0.1",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
+      "FluentValidation >= 11.7.1",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 6.0.22",
       "Microsoft.AspNetCore.Identity >= 2.2.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 6.0.22",
@@ -13189,11 +13226,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
+      "projectUniqueName": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
       "projectName": "AdsWebsiteAPI",
-      "projectPath": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
+      "projectPath": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\AdsWebsiteAPI.csproj",
       "packagesPath": "C:\\Users\\mrk3r\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mrk3r\\source\\repos\\AdsWebsiteAPI\\AdsWebsiteAPI\\obj\\",
+      "outputPath": "C:\\Programs\\GitHub Repositories\\CarPartsAdsProject\\API\\AdsWebsiteAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mrk3r\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -13229,6 +13266,10 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": {
             "target": "Package",
             "version": "[12.0.1, )"
+          },
+          "FluentValidation": {
+            "target": "Package",
+            "version": "[11.7.1, )"
           },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
