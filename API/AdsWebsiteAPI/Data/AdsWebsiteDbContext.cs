@@ -1,11 +1,13 @@
-﻿using AdsWebsiteAPI.Data.Entities;
+﻿using AdsWebsiteAPI.Auth.Entities;
+using AdsWebsiteAPI.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdsWebsiteAPI.Data
 {
-    public class AdsWebsiteDbContext : DbContext
+    public class AdsWebsiteDbContext : IdentityDbContext<AdsWebsiteUser>
     {
-        public DbSet<User>? Users { get; set; }
+        //public DbSet<User>? Users { get; set; }
         public DbSet<Part>? Parts { get; set; }
         public DbSet<Shop>? Shops { get; set; }
         public DbSet<Car>? Cars { get; set; }

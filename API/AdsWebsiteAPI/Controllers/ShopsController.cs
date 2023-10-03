@@ -3,6 +3,10 @@ using AdsWebsiteAPI.Data.Entities;
 using AdsWebsiteAPI.Interfaces;
 using AdsWebsiteAPI.Data.Dtos;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using AdsWebsiteAPI.Auth;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -11,13 +15,13 @@ namespace AdsWebsiteAPI.Controllers
     public class ShopsController : ControllerBase
     {
         private readonly IShopRepository shopRepository;
-        private readonly IUserRepository userRepository;
+        private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
 
-        public ShopsController(IShopRepository shopRepository, IUserRepository userRepository, IMapper mapper)
+        public ShopsController(IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             this.shopRepository = shopRepository;
-            this.userRepository = userRepository;
+            this.authorizationService = authorizationService;
             this.mapper = mapper;
         }
 
@@ -43,12 +47,46 @@ namespace AdsWebsiteAPI.Controllers
             return Ok(mapper.Map<ShopDto>(shop));
         }
 
+        // POST: api/Shops
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Authorize(Roles = AdsWebsiteRoles.AdsWebsiteUser)]
+        public async Task<ActionResult<CreateShopResponseDto>> PostShop(CreateShopRequestDto createShopDto)
+        {
+            var existingShop = await shopRepository.GetAsync(createShopDto.Name);
+
+            if (existingShop != null)
+            {
+                return BadRequest();
+            }
+
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            var shop = new Shop
+            {
+                Name = createShopDto.Name,
+                Location = createShopDto.Location,
+                UserId = userId
+            };
+
+            await shopRepository.CreateAsync(shop);
+
+            return CreatedAtAction("GetShop", new { id = shop.Id }, mapper.Map<CreateShopResponseDto>(shop));
+        }
+
         // PUT: api/Shops/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<ShopDto>> PutShop(int id, UpdateShopDto updateShopDto)
+        public async Task<ActionResult<ShopDto>> PutShop(int id, UpdateShopRequestDto updateShopDto)
         {
             if (id != updateShopDto.Id)
+            {
+                return BadRequest();
+            }
+
+            var existingShop = shopRepository.GetAsync(updateShopDto.Name);
+
+            if (existingShop != null)
             {
                 return BadRequest();
             }
@@ -57,7 +95,14 @@ namespace AdsWebsiteAPI.Controllers
 
             if (shop == null)
             {
-                return NotFound();
+                return BadRequest();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, shop, PolicyNames.ResourceOwner);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             shop.Name = updateShopDto.Name;
@@ -68,39 +113,24 @@ namespace AdsWebsiteAPI.Controllers
             return Ok(mapper.Map<ShopDto>(shop));
         }
 
-        // POST: api/Shops
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ShopDto>> PostShop(CreateShopDto createShopDto)
-        {
-            var owner = await userRepository.GetAsync(createShopDto.OwnerId);
-
-            if (owner == null)
-            {
-                return BadRequest();
-            }
-
-            var shop = new Shop
-            {
-                Name = createShopDto.Name,
-                Location = createShopDto.Location,
-                Owner = owner
-            };
-
-            await shopRepository.CreateAsync(shop);
-
-            return CreatedAtAction("GetShop", new { id = shop.Id }, mapper.Map<ShopDto>(shop));
-        }
-
         // DELETE: api/Shops/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShop(int id)
         {
+            // Delete everything associated with that shop (cars, parts, etc...)
+
             var shop = await shopRepository.GetAsync(id);
 
             if (shop == null)
             {
-                return NotFound();
+                return BadRequest();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, shop, PolicyNames.ResourceOwner);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             await shopRepository.DeleteAsync(shop);

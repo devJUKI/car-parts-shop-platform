@@ -1,4 +1,5 @@
-﻿using AdsWebsiteAPI.Data.Dtos;
+﻿using AdsWebsiteAPI.Auth.Entities;
+using AdsWebsiteAPI.Data.Dtos;
 using AdsWebsiteAPI.Data.Entities;
 using AutoMapper;
 
@@ -9,6 +10,7 @@ namespace AdsWebsiteAPI.Data
         public MapperProfile()
         {
             CreateMap<Shop, ShopDto>();
+            CreateMap<Shop, CreateShopResponseDto>();
 
             CreateMap<Car, CarDto>()
                 .ForPath(dest => dest.Body, opt => opt.MapFrom(src => src.Body!.Name))
@@ -17,6 +19,8 @@ namespace AdsWebsiteAPI.Data
                 .ForPath(dest => dest.Model, opt => opt.MapFrom(src => src.Model!.Name));
 
             CreateMap<Part, PartDto>();
+
+            CreateMap<AdsWebsiteUser, UserDto>();
         }
     }
 }

@@ -1,30 +1,68 @@
+using AdsWebsiteAPI.Auth;
+using AdsWebsiteAPI.Auth.Entities;
+using AdsWebsiteAPI.Auth.Interfaces;
+using AdsWebsiteAPI.Auth.Services;
 using AdsWebsiteAPI.Data;
 using AdsWebsiteAPI.Data.Repositories;
 using AdsWebsiteAPI.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace AdsWebsiteAPI;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+        builder.Services.AddIdentity<AdsWebsiteUser, IdentityRole>()
+            .AddEntityFrameworkStores<AdsWebsiteDbContext>()
+            .AddDefaultTokenProviders();
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters.ValidAudience = builder.Configuration["JWT:ValidAudience"];
+            options.TokenValidationParameters.ValidIssuer = builder.Configuration["JWT:ValidIssuer"];
+            options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]));
+        });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
+        });
 
         // Add services to the container.
 
         builder.Services.AddControllers();
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddDbContext<AdsWebsiteDbContext>();
         builder.Services.AddAutoMapper(typeof(Program));
+        builder.Services.AddScoped<AuthDbSeeder>();
+        builder.Services.AddSingleton<IAuthorizationHandler, ResourceOwnerAuthorizationHandler>();
+
         builder.Services.AddTransient<IShopRepository, ShopRepository>();
         builder.Services.AddTransient<ICarRepository, CarRepository>();
-        builder.Services.AddTransient<IUserRepository, UserRepository>();
+        //builder.Services.AddTransient<IUserRepository, UserRepository>();
         builder.Services.AddTransient<IPartRepository, PartRepository>();
+        builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 
         var app = builder.Build();
 
@@ -37,9 +75,14 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
+
+        using var scope = app.Services.CreateScope();
+        var dbSeeder = scope.ServiceProvider.GetRequiredService<AuthDbSeeder>();
+        await dbSeeder.SeedAsync();
 
         app.Run();
     }

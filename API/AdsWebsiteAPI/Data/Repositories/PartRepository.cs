@@ -23,7 +23,7 @@ namespace AdsWebsiteAPI.Data.Repositories
                 .Include(p => p.Car!.Gearbox)
                 .Include(p => p.Car!.Model)
                 .Include(p => p.Car!.Shop)
-                .Include(p => p.Car!.Shop!.Owner)
+                .Include(p => p.Car!.Shop!.User)
                 .Where(p => p.Car!.Shop!.Id == shopId && p.Car.Id == carId).ToListAsync();
         }
 
@@ -37,7 +37,7 @@ namespace AdsWebsiteAPI.Data.Repositories
                 .Include(p => p.Car!.Gearbox)
                 .Include(p => p.Car!.Model)
                 .Include(p => p.Car!.Shop)
-                .Include(p => p.Car!.Shop!.Owner)
+                .Include(p => p.Car!.Shop!.User)
                 .FirstOrDefaultAsync(p => p.Car!.Shop!.Id == shopId && p.Car!.Id == carId && p.Id == partId);
         }
 

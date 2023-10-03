@@ -15,12 +15,17 @@ namespace AdsWebsiteAPI.Data.Repositories
 
         public async Task<Shop?> GetAsync(int shopId)
         {
-            return await context.Shops!.Include(s => s.Owner).FirstOrDefaultAsync(s => s.Id == shopId);
+            return await context.Shops!.Include(s => s.User).FirstOrDefaultAsync(s => s.Id == shopId);
+        }
+
+        public async Task<Shop?> GetAsync(string shopName)
+        {
+            return await context.Shops!.Include(s => s.User).FirstOrDefaultAsync(s => s.Name == shopName);
         }
 
         public async Task<IReadOnlyList<Shop>> GetAllAsync()
         {
-            return await context.Shops!.Include(s => s.Owner).ToListAsync();
+            return await context.Shops!.Include(s => s.User).ToListAsync();
         }
 
         public async Task CreateAsync(Shop shop)

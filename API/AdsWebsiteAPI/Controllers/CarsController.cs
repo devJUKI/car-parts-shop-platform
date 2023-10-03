@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using AdsWebsiteAPI.Data.Dtos;
 using AdsWebsiteAPI.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using AdsWebsiteAPI.Auth;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -12,12 +14,14 @@ namespace AdsWebsiteAPI.Controllers
     {
         private readonly ICarRepository carRepository;
         private readonly IShopRepository shopRepository;
+        private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
 
-        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IMapper mapper)
+        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             this.carRepository = carRepository;
             this.shopRepository = shopRepository;
+            this.authorizationService = authorizationService;
             this.mapper = mapper;
         }
 
@@ -51,49 +55,6 @@ namespace AdsWebsiteAPI.Controllers
             return Ok(mapper.Map<CarDto>(car));
         }
 
-        // PUT: api/shops/{shopId}/Cars/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{carId}")]
-        public async Task<ActionResult<CarDto>> PutCar(int shopId, int carId, UpdateCarDto updateCarDto)
-        {
-            if (shopId != updateCarDto.ShopId || carId != updateCarDto.Id)
-            {
-                return BadRequest();
-            }
-
-            var car = await carRepository.GetAsync(shopId, carId);
-
-            if (car == null)
-            {
-                return NotFound();
-            }
-
-            var bodyType = await carRepository.GetBodyAsync(updateCarDto.BodyTypeId);
-            var fuelType = await carRepository.GetFuelAsync(updateCarDto.FuelTypeId);
-            var gearboxType = await carRepository.GetGearboxAsync(updateCarDto.GearboxTypeId);
-            var model = await carRepository.GetModelAsync(updateCarDto.ModelId);
-            var shop = await shopRepository.GetAsync(updateCarDto.ShopId);
-
-            if (bodyType == null || fuelType == null || gearboxType == null || model == null || shop == null)
-            {
-                return BadRequest();
-            }
-
-            car.FirstRegistration = updateCarDto.FirstRegistration;
-            car.Mileage = updateCarDto.Mileage;
-            car.Engine = updateCarDto.Engine;
-            car.Power = updateCarDto.Power;
-            car.Body = bodyType;
-            car.Fuel = fuelType;
-            car.Gearbox = gearboxType;
-            car.Model = model;
-            car.Shop = shop;
-
-            await carRepository.UpdateAsync(car);
-
-            return Ok(mapper.Map<CarDto>(car));
-        }
-
         // POST: api/shops/{shopId}/Cars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -108,6 +69,13 @@ namespace AdsWebsiteAPI.Controllers
             if (bodyType == null || fuelType == null || gearboxType == null || model == null || shop == null)
             {
                 return BadRequest();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, shop, PolicyNames.ResourceOwner);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             var car = new Car
@@ -128,6 +96,58 @@ namespace AdsWebsiteAPI.Controllers
             return CreatedAtAction("GetCar", new { shopId = shop!.Id, carId = car.Id }, mapper.Map<CarDto>(car));
         }
 
+        // PUT: api/shops/{shopId}/Cars/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{carId}")]
+        public async Task<ActionResult<CarDto>> PutCar(int shopId, int carId, UpdateCarDto updateCarDto)
+        {
+            if (shopId != updateCarDto.ShopId || carId != updateCarDto.Id)
+            {
+                return BadRequest();
+            }
+
+            var car = await carRepository.GetAsync(shopId, carId);
+
+            if (car == null)
+            {
+                return BadRequest();
+            }
+
+            var bodyType = await carRepository.GetBodyAsync(updateCarDto.BodyTypeId);
+            var fuelType = await carRepository.GetFuelAsync(updateCarDto.FuelTypeId);
+            var gearboxType = await carRepository.GetGearboxAsync(updateCarDto.GearboxTypeId);
+            var model = await carRepository.GetModelAsync(updateCarDto.ModelId);
+            var shop = await shopRepository.GetAsync(updateCarDto.ShopId);
+
+            // Gali priskirti ne savo parduotuvei?
+
+            if (bodyType == null || fuelType == null || gearboxType == null || model == null || shop == null)
+            {
+                return BadRequest();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, car.Shop, PolicyNames.ResourceOwner);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
+            }
+
+            car.FirstRegistration = updateCarDto.FirstRegistration;
+            car.Mileage = updateCarDto.Mileage;
+            car.Engine = updateCarDto.Engine;
+            car.Power = updateCarDto.Power;
+            car.Body = bodyType;
+            car.Fuel = fuelType;
+            car.Gearbox = gearboxType;
+            car.Model = model;
+            car.Shop = shop;
+
+            await carRepository.UpdateAsync(car);
+
+            return Ok(mapper.Map<CarDto>(car));
+        }
+
         // DELETE: api/shops/{shopId}/Cars/5
         [HttpDelete("{carId}")]
         public async Task<IActionResult> DeleteCar(int shopId, int carId)
@@ -136,7 +156,14 @@ namespace AdsWebsiteAPI.Controllers
 
             if (car == null)
             {
-                return NotFound();
+                return BadRequest();
+            }
+
+            var authorizationResult = await authorizationService.AuthorizeAsync(User, car.Shop, PolicyNames.ResourceOwner);
+
+            if (!authorizationResult.Succeeded)
+            {
+                return Forbid();
             }
 
             await carRepository.DeleteAsync(car);

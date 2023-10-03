@@ -310,3 +310,9 @@ C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\System.
 C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\runtimes\linux-ppc64le\native\libe_sqlite3.so
 C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\AutoMapper.dll
 C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\mrk3r\source\repos\AdsWebsiteAPI\AdsWebsiteAPI\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
