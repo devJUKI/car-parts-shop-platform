@@ -18,16 +18,12 @@ namespace AdsWebsiteAPI.Controllers
         private readonly IShopRepository shopRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
-        private readonly IValidator<CreateShopRequestDto> createShopRequestValidator;
-        private readonly IValidator<UpdateShopRequestDto> updateShopRequestValidator;
 
-        public ShopsController(IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper, IValidator<CreateShopRequestDto> createShopRequestValidator, IValidator<UpdateShopRequestDto> updateShopRequestValidator)
+        public ShopsController(IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             this.shopRepository = shopRepository;
             this.authorizationService = authorizationService;
             this.mapper = mapper;
-            this.createShopRequestValidator = createShopRequestValidator;
-            this.updateShopRequestValidator = updateShopRequestValidator;
         }
 
         // GET: api/Shops
@@ -56,9 +52,11 @@ namespace AdsWebsiteAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = AdsWebsiteRoles.AdsWebsiteUser)]
-        public async Task<ActionResult<CreateShopResponseDto>> PostShop(CreateShopRequestDto createShopDto)
+        public async Task<ActionResult<CreateShopResponseDto>> PostShop(
+            CreateShopRequestDto createShopDto,
+            [FromServices] IValidator<CreateShopRequestDto> validator)
         {
-            var validationResults = await createShopRequestValidator.ValidateAsync(createShopDto);
+            var validationResults = await validator.ValidateAsync(createShopDto);
 
             if (validationResults.IsValid == false)
             {
@@ -89,14 +87,17 @@ namespace AdsWebsiteAPI.Controllers
         // PUT: api/Shops/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<ActionResult<ShopDto>> PutShop(int id, UpdateShopRequestDto updateShopDto)
+        public async Task<ActionResult<ShopDto>> PutShop(
+            int id,
+            UpdateShopRequestDto updateShopDto,
+            [FromServices] IValidator<UpdateShopRequestDto> validator)
         {
             if (id != updateShopDto.Id)
             {
                 return BadRequest();
             }
 
-            var validationResults = await updateShopRequestValidator.ValidateAsync(updateShopDto);
+            var validationResults = await validator.ValidateAsync(updateShopDto);
 
             if (validationResults.IsValid == false)
             {

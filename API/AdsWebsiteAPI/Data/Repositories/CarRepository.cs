@@ -28,14 +28,16 @@ namespace AdsWebsiteAPI.Data.Repositories
 
         public async Task<Car?> GetAsync(int shopId, int carId)
         {
-            return await context
+            var result = await context
                 .Cars!
                 .Include(c => c.Body)
                 .Include(c => c.Fuel)
                 .Include(c => c.Gearbox)
                 .Include(c => c.Model)
                 .Include(c => c.Shop)
+                .Include(c => c.Shop!.User)
                 .FirstOrDefaultAsync(c => c.Shop!.Id == shopId && c.Id == carId);
+            return result;
         }
 
         public async Task DeleteAsync(Car car)

@@ -7,7 +7,6 @@ namespace AdsWebsiteAPI.Data
 {
     public class AdsWebsiteDbContext : IdentityDbContext<AdsWebsiteUser>
     {
-        //public DbSet<User>? Users { get; set; }
         public DbSet<Part>? Parts { get; set; }
         public DbSet<Shop>? Shops { get; set; }
         public DbSet<Car>? Cars { get; set; }
@@ -24,7 +23,23 @@ namespace AdsWebsiteAPI.Data
                .AddJsonFile("appsettings.json", optional: false)
                .Build();
 
+            //optionsBuilder.UseMySQL(configuration.GetConnectionString("AWSConnectionString")!);
             optionsBuilder.UseMySQL(configuration.GetConnectionString("MySQLConnectionString")!);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Car>()
+                .HasOne(b => b.Shop)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Part>()
+                .HasOne(b => b.Car)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

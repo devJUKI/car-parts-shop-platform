@@ -635,3 +635,5 @@ C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\obj\Debug\n
 C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\obj\Debug\net6.0\AdsWebsiteAPI.genruntimeconfig.cache
 C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\obj\Debug\net6.0\ref\AdsWebsiteAPI.dll
 C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\bin\Debug\net6.0\FluentValidation.dll
+C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\bin\Debug\net6.0\FluentValidation.AspNetCore.dll
+C:\Programs\GitHub Repositories\CarPartsAdsProject\API\AdsWebsiteAPI\bin\Debug\net6.0\FluentValidation.DependencyInjectionExtensions.dll

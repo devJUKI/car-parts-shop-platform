@@ -3,6 +3,7 @@ using System;
 using AdsWebsiteAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdsWebsiteAPI.Migrations
 {
     [DbContext(typeof(AdsWebsiteDbContext))]
-    partial class AdsWebsiteDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231003215700_CascadeDeleteCars")]
+    partial class CascadeDeleteCars
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -431,8 +434,7 @@ namespace AdsWebsiteAPI.Migrations
                 {
                     b.HasOne("AdsWebsiteAPI.Data.Entities.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CarId");
 
                     b.Navigation("Car");
                 });

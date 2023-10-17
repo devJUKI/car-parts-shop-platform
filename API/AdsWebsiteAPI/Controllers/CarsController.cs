@@ -17,17 +17,13 @@ namespace AdsWebsiteAPI.Controllers
         private readonly IShopRepository shopRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
-        private readonly IValidator<CreateCarDto> createCarDtoValidator;
-        private readonly IValidator<UpdateCarDto> updateCarDtoValidator;
 
-        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper, IValidator<CreateCarDto> createCarDtoValidator, IValidator<UpdateCarDto> updateCarDtoValidator)
+        public CarsController(ICarRepository carRepository, IShopRepository shopRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             this.carRepository = carRepository;
             this.shopRepository = shopRepository;
             this.authorizationService = authorizationService;
             this.mapper = mapper;
-            this.createCarDtoValidator = createCarDtoValidator;
-            this.updateCarDtoValidator = updateCarDtoValidator;
         }
 
         // GET: api/shops/{shopId}/Cars
@@ -63,9 +59,17 @@ namespace AdsWebsiteAPI.Controllers
         // POST: api/shops/{shopId}/Cars
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CarDto>> PostCar(CreateCarDto createCarDto)
+        public async Task<ActionResult<CarDto>> PostCar(
+            int shopId,
+            CreateCarDto createCarDto,
+            [FromServices] IValidator<CreateCarDto> validator)
         {
-            var validationResults = await createCarDtoValidator.ValidateAsync(createCarDto);
+            if (shopId != createCarDto.ShopId)
+            {
+                return BadRequest();
+            }
+
+            var validationResults = await validator.ValidateAsync(createCarDto);
 
             if (validationResults.IsValid == false)
             {
@@ -111,14 +115,18 @@ namespace AdsWebsiteAPI.Controllers
         // PUT: api/shops/{shopId}/Cars/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{carId}")]
-        public async Task<ActionResult<CarDto>> PutCar(int shopId, int carId, UpdateCarDto updateCarDto)
+        public async Task<ActionResult<CarDto>> PutCar(
+            int shopId, 
+            int carId, 
+            UpdateCarDto updateCarDto,
+            [FromServices] IValidator<UpdateCarDto> validator)
         {
             if (shopId != updateCarDto.ShopId || carId != updateCarDto.Id)
             {
                 return BadRequest();
             }
 
-            var validationResults = await updateCarDtoValidator.ValidateAsync(updateCarDto);
+            var validationResults = await validator.ValidateAsync(updateCarDto);
 
             if (validationResults.IsValid == false)
             {

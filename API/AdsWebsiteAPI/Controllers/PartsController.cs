@@ -17,18 +17,13 @@ namespace AdsWebsiteAPI.Controllers
         private readonly ICarRepository carRepository;
         private readonly IAuthorizationService authorizationService;
         private readonly IMapper mapper;
-        private readonly IValidator<CreatePartDto> createPartValidator;
-        private readonly IValidator<UpdatePartDto> updatePartValidator;
 
-        public PartsController(IPartRepository partRepository, ICarRepository carRepository, IAuthorizationService authorizationService,
-            IMapper mapper, IValidator<CreatePartDto> createPartValidator, IValidator<UpdatePartDto> updatePartValidator)
+        public PartsController(IPartRepository partRepository, ICarRepository carRepository, IAuthorizationService authorizationService, IMapper mapper)
         {
             this.partRepository = partRepository;
             this.carRepository = carRepository;
             this.mapper = mapper;
             this.authorizationService = authorizationService;
-            this.createPartValidator = createPartValidator;
-            this.updatePartValidator = updatePartValidator;
         }
 
         // GET: api/Parts
@@ -64,14 +59,18 @@ namespace AdsWebsiteAPI.Controllers
         // POST: api/Parts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<PartDto>> PostPart(int shopId, int carId, CreatePartDto createPartDto)
+        public async Task<ActionResult<PartDto>> PostPart(
+            int shopId, 
+            int carId, 
+            CreatePartDto createPartDto, 
+            [FromServices] IValidator<CreatePartDto> validator)
         {
             if (shopId != createPartDto.ShopId || carId != createPartDto.CarId)
             {
                 return BadRequest();
             }
 
-            var validationResults = await createPartValidator.ValidateAsync(createPartDto);
+            var validationResults = await validator.ValidateAsync(createPartDto);
             
             if (validationResults.IsValid == false)
             {
@@ -109,14 +108,19 @@ namespace AdsWebsiteAPI.Controllers
         // PUT: api/Parts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{partId}")]
-        public async Task<ActionResult<PartDto>> PutPart(int shopId, int carId, int partId, UpdatePartDto updatePartDto)
+        public async Task<ActionResult<PartDto>> PutPart(
+            int shopId, 
+            int carId, 
+            int partId, 
+            UpdatePartDto updatePartDto,
+            [FromServices] IValidator<UpdatePartDto> validator)
         {
             if (shopId != updatePartDto.ShopId || carId != updatePartDto.CarId || partId != updatePartDto.Id)
             {
                 return BadRequest();
             }
 
-            var validationResults = await updatePartValidator.ValidateAsync(updatePartDto);
+            var validationResults = await validator.ValidateAsync(updatePartDto);
 
             if (validationResults.IsValid == false)
             {
