@@ -70,3 +70,469 @@ Sistemą sudarys 3 dalys, kurioms realizuoti bus naudojamos šios technologijos:
 -	/api/shops/{id}/cars/{id}/parts <b>POST Create 201</b>
 -	/api/shops/{id}/cars/{id}/parts/{id} <b>PUT/PATCH Modify 200</b>
 -	/api/shops/{id}/cars/{id}/parts/{id} <b>DELETE Remove 200/204</b>
+
+## API aprašymas
+
+### /api/Register
+
+#### POST
+Creates a new user
+
+##### Payload
+```
+{
+  "firstname": "string",
+  "lastname": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 409 | Conflict (Email already exists) |
+| 400 | Bad Request (Password is not strong enough |
+
+### /api/Login
+
+#### POST
+Returns user information and access token
+
+##### Payload
+```
+{
+  "email": "string",
+  "password": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | Bad Request (Invalid credentials) |
+
+### /api/GetUser
+
+#### GET
+Returns user information
+
+`Authorization required`
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | User was not found |
+
+### /api/CarData/Makes
+
+#### GET
+Returns all makes
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Models
+
+#### GET
+Returns all specified make‘s models
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| makeId | query |  | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Fuels
+
+#### GET
+Returns all fuel types
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Bodies
+
+#### GET
+Returns all body types
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Gearboxes
+
+#### GET
+Returns all gearbox types
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/shops/{shopId}/Cars
+
+#### GET
+Returns all specified shop‘s cars
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 404 | Not Found (Shop was not found) |
+
+#### POST
+Creates new car for the specified shop
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "firstRegistration": "2023-12-11T15:49:14.040Z",
+  "mileage": 0,
+  "engine": 0,
+  "power": 0,
+  "bodyTypeId": 0,
+  "fuelTypeId": 0,
+  "gearboxTypeId": 0,
+  "modelId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Created |
+| 400 | Bad Request (Invalid data) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+### /api/shops/{shopId}/Cars/{carId}
+
+#### GET
+Returns specified car‘s information
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 404 | Not Found (Car was not found) |
+
+#### PUT
+Modifies specified car
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "id": 0,
+  "firstRegistration": "2023-12-11T15:50:17.562Z",
+  "mileage": 0,
+  "engine": 0,
+  "power": 0,
+  "bodyTypeId": 0,
+  "fuelTypeId": 0,
+  "gearboxTypeId": 0,
+  "modelId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | Bad Request (Invalid data) |
+| 404 | Not Found (Car was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+
+#### DELETE
+Deletes specified car
+
+`Authorization required`
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | No Content |
+| 404 | Not Found (Car was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+### /api/shops/{shopId}/cars/{carId}/Parts
+
+#### GET
+Returns all specified car‘s parts
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | Bad Request (Invalid data) |
+| 404 | Not Found (Car was not found) |
+
+#### POST
+Creates a new part for the specified car
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "name": "string",
+  "price": 0,
+  "carId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Created |
+| 400 | Bad Request (Invalid data) |
+| 404 | Not Found (Car was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+### /api/shops/{shopId}/cars/{carId}/Parts/{partId}
+
+#### GET
+Returns specified part‘s information
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+| partId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 404 | Not Found (Part was not found) |
+
+#### PUT
+Modifies specified part
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "id": 0,
+  "name": "string",
+  "price": 0,
+  "carId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+| partId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | Bad Request (Invalid data) |
+| 404 | Not Found (Part was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+#### DELETE
+Deletes specified part
+
+`Authorization required`
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| shopId | Yes | integer |
+| carId | Yes | integer |
+| partId | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | No Content |
+| 404 | Not Found (Part was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+### /api/Shops
+
+#### GET
+Returns all shops
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### POST
+Creates new shop
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "name": "string",
+  "location": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 201 | Created |
+| 400 | Bad Request (Invalid data) |
+| 404 | Conflict (Shop name already exists) |
+
+### /api/Shops/{id}
+
+#### GET
+Returns specified shop‘s information
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| id | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 404 | Not Found (Shop was not found) |
+
+#### PUT
+Modifies specified shop
+
+`Authorization required`
+
+##### Payload
+```
+{
+  "id": 0,
+  "name": "string",
+  "location": "string"
+}
+```
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| id | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+| 400 | Bad Request (Invalid data) |
+| 404 | Not Found (Shop was not found) |
+| 409 | Conflict (Shop name already exists) |
+| 403 | Unauthorized (User is not the owner of this resource) |
+
+#### DELETE
+Deletes specified shop
+
+`Authorization required`
+
+##### Parameters
+
+| Name | Required | Schema |
+| ---- | -------- | ---- |
+| id | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | No Content |
+| 404 | Not Found (Shop was not found) |
+| 403 | Unauthorized (User is not the owner of this resource) |
