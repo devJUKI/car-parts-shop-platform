@@ -70,3 +70,361 @@ Sistemą sudarys 3 dalys, kurioms realizuoti bus naudojamos šios technologijos:
 -	/api/shops/{id}/cars/{id}/parts <b>POST Create 201</b>
 -	/api/shops/{id}/cars/{id}/parts/{id} <b>PUT/PATCH Modify 200</b>
 -	/api/shops/{id}/cars/{id}/parts/{id} <b>DELETE Remove 200/204</b>
+
+## API aprašymas
+
+### /api/Register
+
+#### POST
+```
+{
+  "firstname": "string",
+  "lastname": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/Login
+
+#### POST
+```
+{
+  "email": "string",
+  "password": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/GetUser
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Makes
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Models
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| makeId | query |  | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Fuels
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Bodies
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/CarData/Gearboxes
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/shops/{shopId}/Cars
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### POST
+```
+{
+  "firstRegistration": "2023-12-11T15:49:14.040Z",
+  "mileage": 0,
+  "engine": 0,
+  "power": 0,
+  "bodyTypeId": 0,
+  "fuelTypeId": 0,
+  "gearboxTypeId": 0,
+  "modelId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/shops/{shopId}/Cars/{carId}
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### PUT
+```
+{
+  "id": 0,
+  "firstRegistration": "2023-12-11T15:50:17.562Z",
+  "mileage": 0,
+  "engine": 0,
+  "power": 0,
+  "bodyTypeId": 0,
+  "fuelTypeId": 0,
+  "gearboxTypeId": 0,
+  "modelId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/shops/{shopId}/cars/{carId}/Parts
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### POST
+```
+{
+  "name": "string",
+  "price": 0,
+  "carId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/shops/{shopId}/cars/{carId}/Parts/{partId}
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+| partId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### PUT
+```
+{
+  "id": 0,
+  "name": "string",
+  "price": 0,
+  "carId": 0,
+  "shopId": 0
+}
+```
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+| partId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| shopId | path |  | Yes | integer |
+| carId | path |  | Yes | integer |
+| partId | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/Shops
+
+#### GET
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### POST
+```
+{
+  "name": "string",
+  "location": "string"
+}
+```
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+### /api/Shops/{id}
+
+#### GET
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### PUT
+```
+{
+  "id": 0,
+  "name": "string",
+  "location": "string"
+}
+```
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
+
+#### DELETE
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| id | path |  | Yes | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | Success |
