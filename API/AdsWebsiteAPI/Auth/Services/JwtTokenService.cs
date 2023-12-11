@@ -29,6 +29,7 @@ namespace AdsWebsiteAPI.Auth.Services
             };
 
             authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+            authClaims.AddRange(userRoles.Select(userRole => new Claim("CustomRole", userRole)));
 
             var accessSecurityToken = new JwtSecurityToken
             (

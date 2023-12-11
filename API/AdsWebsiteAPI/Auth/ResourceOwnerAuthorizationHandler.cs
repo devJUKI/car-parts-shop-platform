@@ -7,7 +7,9 @@ namespace AdsWebsiteAPI.Auth
 {
     public class ResourceOwnerAuthorizationHandler : AuthorizationHandler<ResourceOwnerRequirement, IUserOwnedResource>
     {
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ResourceOwnerRequirement requirement,
+        protected override Task HandleRequirementAsync(
+            AuthorizationHandlerContext context, 
+            ResourceOwnerRequirement requirement,
             IUserOwnedResource resource)
         {
             if (context.User.IsInRole(AdsWebsiteRoles.Admin) ||

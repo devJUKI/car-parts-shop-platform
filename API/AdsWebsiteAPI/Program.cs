@@ -48,6 +48,10 @@ public class Program
             options.AddPolicy(PolicyNames.ResourceOwner, policy => policy.Requirements.Add(new ResourceOwnerRequirement()));
         });
 
+        builder.Services.AddCors(x => x.AddDefaultPolicy(builder => {
+            builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        }));
+
         // Add services to the container.
 
         builder.Services.AddControllers();
@@ -64,7 +68,7 @@ public class Program
 
         builder.Services.AddTransient<IShopRepository, ShopRepository>();
         builder.Services.AddTransient<ICarRepository, CarRepository>();
-        builder.Services.AddTransient<IPartRepository, PartRepository>();
+        builder.Services.AddTransient<IPartRepository, PartRepository>(); 
         builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 
         var app = builder.Build();
@@ -80,6 +84,8 @@ public class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
+
+        app.UseCors();
 
         app.MapControllers();
 

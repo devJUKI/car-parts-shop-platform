@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AdsWebsiteAPI.Data.Entities;
 using AdsWebsiteAPI.Interfaces;
+using AdsWebsiteAPI.Data.Dtos;
 
 namespace AdsWebsiteAPI.Data.Repositories
 {
@@ -22,6 +23,7 @@ namespace AdsWebsiteAPI.Data.Repositories
                 .Include(c => c.Gearbox)
                 .Include(c => c.Model)
                 .Include(c => c.Shop)
+                .Include(c => c.Model!.Make)
                 .Where(c => c.Shop!.Id == shopId)
                 .ToListAsync();
         }
@@ -36,6 +38,7 @@ namespace AdsWebsiteAPI.Data.Repositories
                 .Include(c => c.Model)
                 .Include(c => c.Shop)
                 .Include(c => c.Shop!.User)
+                .Include(c => c.Model!.Make)
                 .FirstOrDefaultAsync(c => c.Shop!.Id == shopId && c.Id == carId);
             return result;
         }
@@ -56,6 +59,22 @@ namespace AdsWebsiteAPI.Data.Repositories
         {
             context.Cars!.Update(car);
             await context.SaveChangesAsync();
+        }
+
+        public async Task<IReadOnlyList<Make>> GetAllMakesAsync()
+        {
+            return await context
+                .Makes!
+                .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<Model>> GetAllModelsAsync(int makeId)
+        {
+            return await context
+                .Models!
+                .Where(m => m.Make!.Id == makeId)
+                .Include(m => m.Make)
+                .ToListAsync();
         }
 
         public async Task<Make?> GetMakeAsync(int makeId)
@@ -81,6 +100,21 @@ namespace AdsWebsiteAPI.Data.Repositories
         public async Task<GearboxType?> GetGearboxAsync(int gearboxId)
         {
             return await context.GearboxTypes!.FirstOrDefaultAsync(g => g.Id == gearboxId);
+        }
+
+        public async Task<List<BodyType>> GetAllBodiesAsync()
+        {
+            return await context.BodyTypes!.ToListAsync();
+        }
+
+        public async Task<List<FuelType>> GetAllFuelsAsync()
+        {
+            return await context.FuelTypes!.ToListAsync();
+        }
+
+        public async Task<List<GearboxType>> GetAllGearboxesAsync()
+        {
+            return await context.GearboxTypes!.ToListAsync();
         }
     }
 }

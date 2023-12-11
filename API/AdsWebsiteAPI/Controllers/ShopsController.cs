@@ -104,7 +104,7 @@ namespace AdsWebsiteAPI.Controllers
                 return BadRequest(validationResults.ToDictionary());
             }
 
-            var existingShop = shopRepository.GetAsync(updateShopDto.Name);
+            var existingShop = await shopRepository.GetAsync(updateShopDto.Name);
 
             if (existingShop != null)
             {

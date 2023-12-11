@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using System.Data;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace AdsWebsiteAPI.Controllers
 {
@@ -32,7 +35,7 @@ namespace AdsWebsiteAPI.Controllers
 
             if (user != null)
             {
-                return BadRequest("Request invalid.");
+                return Conflict("User with that email already exists.");
             }
 
             var newUser = new AdsWebsiteUser
@@ -54,7 +57,11 @@ namespace AdsWebsiteAPI.Controllers
 
             await userManager.AddToRoleAsync(newUser, AdsWebsiteRoles.AdsWebsiteUser);
 
-            return CreatedAtAction(nameof(Register), mapper.Map<UserDto>(newUser));
+            var accessToken = jwtTokenService.CreateAccessToken(newUser.Email, newUser.Id, new string[] { AdsWebsiteRoles.AdsWebsiteUser });
+            var userDto = mapper.Map<UserDto>(newUser);
+            var registerResponse = new SuccessfulRegisterDto(userDto, accessToken);
+
+            return CreatedAtAction(nameof(Register), registerResponse);
         }
 
         [HttpPost]
@@ -75,10 +82,27 @@ namespace AdsWebsiteAPI.Controllers
                 return BadRequest("User name or password is invalid.");
             }
 
+            var userDto = mapper.Map<UserDto>(user);
             var roles = await userManager.GetRolesAsync(user);
-            var accessToken = jwtTokenService.CreateAccessToken(user.UserName, user.Id, roles);
+            var accessToken = jwtTokenService.CreateAccessToken(user.Email, user.Id, roles);
 
-            return Ok(new SuccessfulLoginDto(accessToken));
+            return Ok(new SuccessfulLoginDto(userDto, accessToken));
+        }
+
+        [HttpGet]
+        [Route("GetUser")]
+        [Authorize(Roles = AdsWebsiteRoles.AdsWebsiteUser)]
+        public async Task<ActionResult> GetUser()
+        {
+            var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return BadRequest("User was not found");
+            }
+
+            return Ok(mapper.Map<UserDto>(user));
         }
     }
 }
