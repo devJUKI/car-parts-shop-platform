@@ -237,7 +237,7 @@ Creates new car for the specified shop
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | Success |
+| 201 | Created |
 | 400 | Bad Request (Invalid data) |
 | 403 | Unauthorized (User is not the owner of this resource) |
 
@@ -436,7 +436,7 @@ Deletes specified part
 
 | Code | Description |
 | ---- | ----------- |
-| 200 | Success |
+| 204 | No Content |
 | 404 | Not Found (Part was not found) |
 | 403 | Unauthorized (User is not the owner of this resource) |
 
