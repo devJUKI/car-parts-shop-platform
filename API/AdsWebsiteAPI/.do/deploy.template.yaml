@@ -1,0 +1,7 @@
+spec:
+ name: first-project
+ services:
+ - name: web
+   git:
+     branch: main
+     repo_clone_url: https://github.com/devJUKI/car-parts-shop-platform/tree/main/API/AdsWebsiteAPI.git
