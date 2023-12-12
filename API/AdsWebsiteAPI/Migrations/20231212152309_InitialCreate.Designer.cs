@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdsWebsiteAPI.Migrations
 {
     [DbContext(typeof(AdsWebsiteDbContext))]
-    [Migration("20230923141642_InitialCreate")]
+    [Migration("20231212152309_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -407,7 +407,8 @@ namespace AdsWebsiteAPI.Migrations
 
                     b.HasOne("AdsWebsiteAPI.Data.Entities.Shop", "Shop")
                         .WithMany()
-                        .HasForeignKey("ShopId");
+                        .HasForeignKey("ShopId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Body");
 
@@ -433,7 +434,8 @@ namespace AdsWebsiteAPI.Migrations
                 {
                     b.HasOne("AdsWebsiteAPI.Data.Entities.Car", "Car")
                         .WithMany()
-                        .HasForeignKey("CarId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Car");
                 });

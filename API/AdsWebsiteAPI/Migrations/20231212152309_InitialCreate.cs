@@ -309,7 +309,8 @@ namespace AdsWebsiteAPI.Migrations
                         name: "FK_Cars_Shops_ShopId",
                         column: x => x.ShopId,
                         principalTable: "Shops",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -330,7 +331,8 @@ namespace AdsWebsiteAPI.Migrations
                         name: "FK_Parts_Cars_CarId",
                         column: x => x.CarId,
                         principalTable: "Cars",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 

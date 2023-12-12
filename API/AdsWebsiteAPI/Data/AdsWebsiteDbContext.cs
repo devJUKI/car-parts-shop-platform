@@ -24,7 +24,8 @@ namespace AdsWebsiteAPI.Data
                .Build();
 
             //optionsBuilder.UseMySQL(configuration.GetConnectionString("AWSConnectionString")!);
-            optionsBuilder.UseMySQL(configuration.GetConnectionString("MySQLConnectionString")!);
+            //optionsBuilder.UseMySQL(configuration.GetConnectionString("MySQLConnectionString")!);
+            optionsBuilder.UseMySQL(configuration.GetConnectionString("DigitalOceanConnectionString")!);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

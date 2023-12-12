@@ -21,8 +21,8 @@ namespace AdsWebsiteAPI.Data
 
         public async Task SeedAsync()
         {
-            await AddDefaultRoles();
-            await AddAdminUser();
+            //await AddDefaultRoles();
+            //await AddAdminUser();
             //await AddDefaultCarDataEntries();
         }
 
@@ -42,7 +42,8 @@ namespace AdsWebsiteAPI.Data
 
                 if (createAdminUserResult.Succeeded)
                 {
-                    await _userManager.AddToRolesAsync(newAdminUser, AdsWebsiteRoles.All);
+                    //await _userManager.AddToRolesAsync(newAdminUser, AdsWebsiteRoles.All);
+                    await _userManager.AddToRoleAsync(newAdminUser, AdsWebsiteRoles.Admin);
                 }
             }
         }
@@ -64,7 +65,7 @@ namespace AdsWebsiteAPI.Data
         {
             var makes = await _dbContext.Makes!.ToListAsync();
 
-            if (makes.Where(m => m.Name == "530d").Any() == false)
+            if (makes.Where(m => m.Name == "BMW").Any() == false)
             {
                 _dbContext.Makes!.Add(new Make
                 {
@@ -87,6 +88,28 @@ namespace AdsWebsiteAPI.Data
 
             }
 
+            if (makes.Where(m => m.Name == "Mercedes-Benz").Any() == false)
+            {
+                _dbContext.Makes!.Add(new Make
+                {
+                    Name = "Mercedes-Benz",
+                });
+                await _dbContext.SaveChangesAsync();
+            }
+
+            var models1 = await _dbContext.Models!.ToListAsync();
+            var make2 = await _dbContext.Makes!.Where(m => m.Name == "Mercedes-Benz").FirstAsync();
+
+            if (models1.Where(m => m.Name == "C63s").Any() == false)
+            {
+                _dbContext.Models!.Add(new Model
+                {
+                    Name = "C63s",
+                    Make = make2
+                });
+                await _dbContext.SaveChangesAsync();
+            }
+
             var fuelTypes = await _dbContext.FuelTypes!.ToListAsync();
 
             if (fuelTypes.Where(f => f.Name == "Diesel").Any() == false)
@@ -96,7 +119,15 @@ namespace AdsWebsiteAPI.Data
                     Name = "Diesel"
                 });
                 await _dbContext.SaveChangesAsync();
+            }
 
+            if (fuelTypes.Where(f => f.Name == "Petrol").Any() == false)
+            {
+                _dbContext.FuelTypes!.Add(new FuelType
+                {
+                    Name = "Petrol"
+                });
+                await _dbContext.SaveChangesAsync();
             }
 
             var bodyTypes = await _dbContext.BodyTypes!.ToListAsync();
@@ -108,7 +139,15 @@ namespace AdsWebsiteAPI.Data
                     Name = "Sedan"
                 });
                 await _dbContext.SaveChangesAsync();
+            }
 
+            if (bodyTypes.Where(f => f.Name == "Coupe").Any() == false)
+            {
+                _dbContext.BodyTypes!.Add(new BodyType
+                {
+                    Name = "Coupe"
+                });
+                await _dbContext.SaveChangesAsync();
             }
 
             var gearboxTypes = await _dbContext.GearboxTypes!.ToListAsync();
@@ -120,7 +159,15 @@ namespace AdsWebsiteAPI.Data
                     Name = "Manual"
                 });
                 await _dbContext.SaveChangesAsync();
+            }
 
+            if (gearboxTypes.Where(f => f.Name == "Automatic").Any() == false)
+            {
+                _dbContext.GearboxTypes!.Add(new GearboxType
+                {
+                    Name = "Automatic"
+                });
+                await _dbContext.SaveChangesAsync();
             }
 
             makes = await _dbContext.Makes!.ToListAsync();
